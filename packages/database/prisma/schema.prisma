@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+}
+
+model Session {
+  id            String              @id @default(cuid())
+  userId        String
+  title         String?
+  startedAt     DateTime            @default(now())
+  stoppedAt     DateTime?
+  state         SessionState        @default(recording)
+  summary       String?             @db.Text
+  transcriptUrl String?
+  segments      TranscriptSegment[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  user          User                @relation(fields: [userId], references: [id])
+}
+
+model TranscriptSegment {
+  id         String   @id @default(cuid())
+  sessionId  String
+  seq        Int
+  startMs    Int
+  endMs      Int
+  text       String   @db.Text
+  speaker    String?
+  isFinal    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  session    Session  @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId, seq])
+}
+
+enum SessionState {
+  recording
+  paused
+  processing
+  completed
+  error
+}
