@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { prisma } from "@scribeai/database";
+import { prisma } from "../../../../packages/database/src";
 
 export const sessionsRouter = Router();
 
@@ -10,9 +10,7 @@ sessionsRouter.post("/", async (req, res) => {
   const parsed = createSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error });
 
-  //TODO: integrate real user authentication using Better AUth
-  const userId = (req.headers["x-user-id"] as string) ?? "demo-user";
-
+  const userId = (req as any).user.id;
   const session = await prisma.session.create({
     data: {
       userId,
@@ -25,8 +23,7 @@ sessionsRouter.post("/", async (req, res) => {
 
 sessionsRouter.get("/", async (req, res) => {
 
-  //TODO: integrate real user authentication using Better AUth
-  const userId = (req.headers["x-user-id"] as string) ?? "demo-user";
+  const userId = (req as any).user.id;
   const sessions = await prisma.session.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },

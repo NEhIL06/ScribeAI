@@ -2,7 +2,7 @@ import { Server, Socket } from "socket.io";
 import path from "path";
 import fs from "fs";
 import { z } from "zod";
-import { prisma } from "@scribeai/database";
+import { prisma } from "../../../../packages/database/src"
 import { enqueueJob } from "../queue/diskQueue";
 import { CHUNK_STORE } from "../config";
 
@@ -21,7 +21,18 @@ export function registerRecordingNamespace(io: Server) {
     console.log("socket connected", socket.id);
 
     socket.on("joinSession", async (payload: { sessionId: string }) => {
+
       const { sessionId } = payload;
+
+      const session = await prisma.session.findUnique({
+        where: { id: sessionId, userId: (socket as any).user.id }
+      })
+
+      if(!session) {
+        socket.emit("Error", { error: "No permission" });
+        return;
+      }
+
       socket.join(sessionId);
       socket.emit("joined", { sessionId });
     });
@@ -80,12 +91,12 @@ export function registerRecordingNamespace(io: Server) {
       enqueueJob("finalize", { sessionId });
     });
 
-    socket.on("heartbeat", (payload) => {
+    socket.on("heartbeat", () => {
       socket.emit("heartbeatAck", { ts: Date.now() });
     });
 
     socket.on("disconnect", () => {
-      // no-op
+      socket.emit("disconnected", { sessionId: socket.id });
     });
   });
 }

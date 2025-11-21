@@ -4,15 +4,23 @@ import cors from "cors";
 import { sessionsRouter } from "./routes/session";
 import { healthRouter } from "./routes/health";
 
+import { authMiddleware } from "./middleware/auth";
+
+
+
 dotenv.config();
 
 const app = express();
 
 const allowredOrigins = process.env.CORS_ALLOWED_ORIGINS || "*";
-app.use(cors());
+app.use(cors({
+  origin: allowredOrigins,
+}));
 app.use(express.json());
 
-app.use("/v1/sessions", sessionsRouter);
+
+app.use("/v1/sessions", authMiddleware, sessionsRouter);
+
 app.use("/health", healthRouter);
 
 const PORT = process.env.PORT || 4000;
