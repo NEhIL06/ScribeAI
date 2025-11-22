@@ -5,7 +5,7 @@ import { Server as IOServer } from "socket.io";
 import { registerRecordingNamespace } from "./sockets/recording";
 import { startProcessor, setIo } from "./workers/processor";
 //TODO change to ./scribeai/web
-import { verifyAuthToken } from "../../web/auth";
+import { useSession } from "../../web/scribeai_frontend/lib/auth-client";
 
 dotenv.config();
 
@@ -25,8 +25,9 @@ io.use(async (socket, next) => {
   if (!token) return next(new Error("Missing auth token"));
 
   try {
-    const session = await verifyAuthToken(token);
-    (socket as any).user = session.user;
+    const data = useSession();
+    const { data: session} = useSession();
+    (socket as any).user = session?.user;
     next();
   } catch {
     next(new Error("Unauthorized"));

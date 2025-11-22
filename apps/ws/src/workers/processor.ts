@@ -7,7 +7,7 @@ import os from "os";
 import fs from "fs";
 import path from "path";
 import { transcribeChunk, summarizeTranscript } from "../lib/gemini";
-import { prisma } from "@scribeai/database";
+import { prisma } from "../../../../packages/database/src";
 
 ffmpeg.setFfmpegPath(ffmpegPath as string);
 const log = pino();
