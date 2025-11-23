@@ -256,7 +256,7 @@ export type TranscriptSegmentWhereInput = {
   speaker?: Prisma.StringNullableFilter<"TranscriptSegment"> | string | null
   isFinal?: Prisma.BoolFilter<"TranscriptSegment"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TranscriptSegment"> | Date | string
-  session?: Prisma.XOR<Prisma.SessionScalarRelationFilter, Prisma.SessionWhereInput>
+  recordingSession?: Prisma.XOR<Prisma.RecordingSessionScalarRelationFilter, Prisma.RecordingSessionWhereInput>
 }
 
 export type TranscriptSegmentOrderByWithRelationInput = {
@@ -269,7 +269,7 @@ export type TranscriptSegmentOrderByWithRelationInput = {
   speaker?: Prisma.SortOrderInput | Prisma.SortOrder
   isFinal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  session?: Prisma.SessionOrderByWithRelationInput
+  recordingSession?: Prisma.RecordingSessionOrderByWithRelationInput
 }
 
 export type TranscriptSegmentWhereUniqueInput = Prisma.AtLeast<{
@@ -285,7 +285,7 @@ export type TranscriptSegmentWhereUniqueInput = Prisma.AtLeast<{
   speaker?: Prisma.StringNullableFilter<"TranscriptSegment"> | string | null
   isFinal?: Prisma.BoolFilter<"TranscriptSegment"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TranscriptSegment"> | Date | string
-  session?: Prisma.XOR<Prisma.SessionScalarRelationFilter, Prisma.SessionWhereInput>
+  recordingSession?: Prisma.XOR<Prisma.RecordingSessionScalarRelationFilter, Prisma.RecordingSessionWhereInput>
 }, "id">
 
 export type TranscriptSegmentOrderByWithAggregationInput = {
@@ -329,7 +329,7 @@ export type TranscriptSegmentCreateInput = {
   speaker?: string | null
   isFinal?: boolean
   createdAt?: Date | string
-  session: Prisma.SessionCreateNestedOneWithoutSegmentsInput
+  recordingSession: Prisma.RecordingSessionCreateNestedOneWithoutSegmentsInput
 }
 
 export type TranscriptSegmentUncheckedCreateInput = {
@@ -353,7 +353,7 @@ export type TranscriptSegmentUpdateInput = {
   speaker?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFinal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  session?: Prisma.SessionUpdateOneRequiredWithoutSegmentsNestedInput
+  recordingSession?: Prisma.RecordingSessionUpdateOneRequiredWithoutSegmentsNestedInput
 }
 
 export type TranscriptSegmentUncheckedUpdateInput = {
@@ -461,45 +461,45 @@ export type TranscriptSegmentSumOrderByAggregateInput = {
   endMs?: Prisma.SortOrder
 }
 
-export type TranscriptSegmentCreateNestedManyWithoutSessionInput = {
-  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput> | Prisma.TranscriptSegmentCreateWithoutSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput[]
-  createMany?: Prisma.TranscriptSegmentCreateManySessionInputEnvelope
+export type TranscriptSegmentCreateNestedManyWithoutRecordingSessionInput = {
+  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput> | Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput[]
+  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput[]
+  createMany?: Prisma.TranscriptSegmentCreateManyRecordingSessionInputEnvelope
   connect?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
 }
 
-export type TranscriptSegmentUncheckedCreateNestedManyWithoutSessionInput = {
-  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput> | Prisma.TranscriptSegmentCreateWithoutSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput[]
-  createMany?: Prisma.TranscriptSegmentCreateManySessionInputEnvelope
+export type TranscriptSegmentUncheckedCreateNestedManyWithoutRecordingSessionInput = {
+  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput> | Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput[]
+  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput[]
+  createMany?: Prisma.TranscriptSegmentCreateManyRecordingSessionInputEnvelope
   connect?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
 }
 
-export type TranscriptSegmentUpdateManyWithoutSessionNestedInput = {
-  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput> | Prisma.TranscriptSegmentCreateWithoutSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput[]
-  upsert?: Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutSessionInput | Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutSessionInput[]
-  createMany?: Prisma.TranscriptSegmentCreateManySessionInputEnvelope
+export type TranscriptSegmentUpdateManyWithoutRecordingSessionNestedInput = {
+  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput> | Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput[]
+  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput[]
+  upsert?: Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutRecordingSessionInput | Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutRecordingSessionInput[]
+  createMany?: Prisma.TranscriptSegmentCreateManyRecordingSessionInputEnvelope
   set?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
   disconnect?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
   delete?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
   connect?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
-  update?: Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutSessionInput | Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutSessionInput[]
-  updateMany?: Prisma.TranscriptSegmentUpdateManyWithWhereWithoutSessionInput | Prisma.TranscriptSegmentUpdateManyWithWhereWithoutSessionInput[]
+  update?: Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutRecordingSessionInput | Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutRecordingSessionInput[]
+  updateMany?: Prisma.TranscriptSegmentUpdateManyWithWhereWithoutRecordingSessionInput | Prisma.TranscriptSegmentUpdateManyWithWhereWithoutRecordingSessionInput[]
   deleteMany?: Prisma.TranscriptSegmentScalarWhereInput | Prisma.TranscriptSegmentScalarWhereInput[]
 }
 
-export type TranscriptSegmentUncheckedUpdateManyWithoutSessionNestedInput = {
-  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput> | Prisma.TranscriptSegmentCreateWithoutSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutSessionInput[]
-  upsert?: Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutSessionInput | Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutSessionInput[]
-  createMany?: Prisma.TranscriptSegmentCreateManySessionInputEnvelope
+export type TranscriptSegmentUncheckedUpdateManyWithoutRecordingSessionNestedInput = {
+  create?: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput> | Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput[] | Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput[]
+  connectOrCreate?: Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput | Prisma.TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput[]
+  upsert?: Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutRecordingSessionInput | Prisma.TranscriptSegmentUpsertWithWhereUniqueWithoutRecordingSessionInput[]
+  createMany?: Prisma.TranscriptSegmentCreateManyRecordingSessionInputEnvelope
   set?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
   disconnect?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
   delete?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
   connect?: Prisma.TranscriptSegmentWhereUniqueInput | Prisma.TranscriptSegmentWhereUniqueInput[]
-  update?: Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutSessionInput | Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutSessionInput[]
-  updateMany?: Prisma.TranscriptSegmentUpdateManyWithWhereWithoutSessionInput | Prisma.TranscriptSegmentUpdateManyWithWhereWithoutSessionInput[]
+  update?: Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutRecordingSessionInput | Prisma.TranscriptSegmentUpdateWithWhereUniqueWithoutRecordingSessionInput[]
+  updateMany?: Prisma.TranscriptSegmentUpdateManyWithWhereWithoutRecordingSessionInput | Prisma.TranscriptSegmentUpdateManyWithWhereWithoutRecordingSessionInput[]
   deleteMany?: Prisma.TranscriptSegmentScalarWhereInput | Prisma.TranscriptSegmentScalarWhereInput[]
 }
 
@@ -511,11 +511,7 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
-export type TranscriptSegmentCreateWithoutSessionInput = {
+export type TranscriptSegmentCreateWithoutRecordingSessionInput = {
   id?: string
   seq: number
   startMs: number
@@ -526,7 +522,7 @@ export type TranscriptSegmentCreateWithoutSessionInput = {
   createdAt?: Date | string
 }
 
-export type TranscriptSegmentUncheckedCreateWithoutSessionInput = {
+export type TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput = {
   id?: string
   seq: number
   startMs: number
@@ -537,30 +533,30 @@ export type TranscriptSegmentUncheckedCreateWithoutSessionInput = {
   createdAt?: Date | string
 }
 
-export type TranscriptSegmentCreateOrConnectWithoutSessionInput = {
+export type TranscriptSegmentCreateOrConnectWithoutRecordingSessionInput = {
   where: Prisma.TranscriptSegmentWhereUniqueInput
-  create: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput>
+  create: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput>
 }
 
-export type TranscriptSegmentCreateManySessionInputEnvelope = {
-  data: Prisma.TranscriptSegmentCreateManySessionInput | Prisma.TranscriptSegmentCreateManySessionInput[]
+export type TranscriptSegmentCreateManyRecordingSessionInputEnvelope = {
+  data: Prisma.TranscriptSegmentCreateManyRecordingSessionInput | Prisma.TranscriptSegmentCreateManyRecordingSessionInput[]
   skipDuplicates?: boolean
 }
 
-export type TranscriptSegmentUpsertWithWhereUniqueWithoutSessionInput = {
+export type TranscriptSegmentUpsertWithWhereUniqueWithoutRecordingSessionInput = {
   where: Prisma.TranscriptSegmentWhereUniqueInput
-  update: Prisma.XOR<Prisma.TranscriptSegmentUpdateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedUpdateWithoutSessionInput>
-  create: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutSessionInput>
+  update: Prisma.XOR<Prisma.TranscriptSegmentUpdateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedUpdateWithoutRecordingSessionInput>
+  create: Prisma.XOR<Prisma.TranscriptSegmentCreateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedCreateWithoutRecordingSessionInput>
 }
 
-export type TranscriptSegmentUpdateWithWhereUniqueWithoutSessionInput = {
+export type TranscriptSegmentUpdateWithWhereUniqueWithoutRecordingSessionInput = {
   where: Prisma.TranscriptSegmentWhereUniqueInput
-  data: Prisma.XOR<Prisma.TranscriptSegmentUpdateWithoutSessionInput, Prisma.TranscriptSegmentUncheckedUpdateWithoutSessionInput>
+  data: Prisma.XOR<Prisma.TranscriptSegmentUpdateWithoutRecordingSessionInput, Prisma.TranscriptSegmentUncheckedUpdateWithoutRecordingSessionInput>
 }
 
-export type TranscriptSegmentUpdateManyWithWhereWithoutSessionInput = {
+export type TranscriptSegmentUpdateManyWithWhereWithoutRecordingSessionInput = {
   where: Prisma.TranscriptSegmentScalarWhereInput
-  data: Prisma.XOR<Prisma.TranscriptSegmentUpdateManyMutationInput, Prisma.TranscriptSegmentUncheckedUpdateManyWithoutSessionInput>
+  data: Prisma.XOR<Prisma.TranscriptSegmentUpdateManyMutationInput, Prisma.TranscriptSegmentUncheckedUpdateManyWithoutRecordingSessionInput>
 }
 
 export type TranscriptSegmentScalarWhereInput = {
@@ -578,7 +574,7 @@ export type TranscriptSegmentScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"TranscriptSegment"> | Date | string
 }
 
-export type TranscriptSegmentCreateManySessionInput = {
+export type TranscriptSegmentCreateManyRecordingSessionInput = {
   id?: string
   seq: number
   startMs: number
@@ -589,7 +585,7 @@ export type TranscriptSegmentCreateManySessionInput = {
   createdAt?: Date | string
 }
 
-export type TranscriptSegmentUpdateWithoutSessionInput = {
+export type TranscriptSegmentUpdateWithoutRecordingSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   seq?: Prisma.IntFieldUpdateOperationsInput | number
   startMs?: Prisma.IntFieldUpdateOperationsInput | number
@@ -600,7 +596,7 @@ export type TranscriptSegmentUpdateWithoutSessionInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type TranscriptSegmentUncheckedUpdateWithoutSessionInput = {
+export type TranscriptSegmentUncheckedUpdateWithoutRecordingSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   seq?: Prisma.IntFieldUpdateOperationsInput | number
   startMs?: Prisma.IntFieldUpdateOperationsInput | number
@@ -611,7 +607,7 @@ export type TranscriptSegmentUncheckedUpdateWithoutSessionInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type TranscriptSegmentUncheckedUpdateManyWithoutSessionInput = {
+export type TranscriptSegmentUncheckedUpdateManyWithoutRecordingSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   seq?: Prisma.IntFieldUpdateOperationsInput | number
   startMs?: Prisma.IntFieldUpdateOperationsInput | number
@@ -634,7 +630,7 @@ export type TranscriptSegmentSelect<ExtArgs extends runtime.Types.Extensions.Int
   speaker?: boolean
   isFinal?: boolean
   createdAt?: boolean
-  session?: boolean | Prisma.SessionDefaultArgs<ExtArgs>
+  recordingSession?: boolean | Prisma.RecordingSessionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["transcriptSegment"]>
 
 export type TranscriptSegmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -647,7 +643,7 @@ export type TranscriptSegmentSelectCreateManyAndReturn<ExtArgs extends runtime.T
   speaker?: boolean
   isFinal?: boolean
   createdAt?: boolean
-  session?: boolean | Prisma.SessionDefaultArgs<ExtArgs>
+  recordingSession?: boolean | Prisma.RecordingSessionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["transcriptSegment"]>
 
 export type TranscriptSegmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -660,7 +656,7 @@ export type TranscriptSegmentSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   speaker?: boolean
   isFinal?: boolean
   createdAt?: boolean
-  session?: boolean | Prisma.SessionDefaultArgs<ExtArgs>
+  recordingSession?: boolean | Prisma.RecordingSessionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["transcriptSegment"]>
 
 export type TranscriptSegmentSelectScalar = {
@@ -677,19 +673,19 @@ export type TranscriptSegmentSelectScalar = {
 
 export type TranscriptSegmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sessionId" | "seq" | "startMs" | "endMs" | "text" | "speaker" | "isFinal" | "createdAt", ExtArgs["result"]["transcriptSegment"]>
 export type TranscriptSegmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  session?: boolean | Prisma.SessionDefaultArgs<ExtArgs>
+  recordingSession?: boolean | Prisma.RecordingSessionDefaultArgs<ExtArgs>
 }
 export type TranscriptSegmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  session?: boolean | Prisma.SessionDefaultArgs<ExtArgs>
+  recordingSession?: boolean | Prisma.RecordingSessionDefaultArgs<ExtArgs>
 }
 export type TranscriptSegmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  session?: boolean | Prisma.SessionDefaultArgs<ExtArgs>
+  recordingSession?: boolean | Prisma.RecordingSessionDefaultArgs<ExtArgs>
 }
 
 export type $TranscriptSegmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TranscriptSegment"
   objects: {
-    session: Prisma.$SessionPayload<ExtArgs>
+    recordingSession: Prisma.$RecordingSessionPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1095,7 +1091,7 @@ readonly fields: TranscriptSegmentFieldRefs;
  */
 export interface Prisma__TranscriptSegmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  session<T extends Prisma.SessionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SessionDefaultArgs<ExtArgs>>): Prisma.Prisma__SessionClient<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  recordingSession<T extends Prisma.RecordingSessionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecordingSessionDefaultArgs<ExtArgs>>): Prisma.Prisma__RecordingSessionClient<runtime.Types.Result.GetResult<Prisma.$RecordingSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

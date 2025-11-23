@@ -10,5 +10,7 @@
  */
 export type * from './models/User.ts'
 export type * from './models/Session.ts'
+export type * from './models/Account.ts'
+export type * from './models/RecordingSession.ts'
 export type * from './models/TranscriptSegment.ts'
 export type * from './commonInputTypes.ts'

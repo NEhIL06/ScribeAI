@@ -24,11 +24,11 @@ export function registerRecordingNamespace(io: Server) {
 
       const { sessionId } = payload;
 
-      const session = await prisma.session.findUnique({
+      const session = await prisma.recordingSession.findFirst({
         where: { id: sessionId, userId: (socket as any).user.id }
       })
 
-      if(!session) {
+      if (!session) {
         socket.emit("Error", { error: "No permission" });
         return;
       }
@@ -77,16 +77,16 @@ export function registerRecordingNamespace(io: Server) {
 
     socket.on("pause", async ({ sessionId }: { sessionId: string }) => {
       ns.to(sessionId).emit("paused", { sessionId });
-      await prisma.session.updateMany({ where: { id: sessionId }, data: { state: "paused" } }).catch(() => {});
+      await prisma.recordingSession.updateMany({ where: { id: sessionId }, data: { state: "paused" } }).catch(() => { });
     });
 
     socket.on("resume", async ({ sessionId }: { sessionId: string }) => {
       ns.to(sessionId).emit("resumed", { sessionId });
-      await prisma.session.updateMany({ where: { id: sessionId }, data: { state: "recording" } }).catch(() => {});
+      await prisma.recordingSession.updateMany({ where: { id: sessionId }, data: { state: "recording" } }).catch(() => { });
     });
 
     socket.on("stopSession", async ({ sessionId }: { sessionId: string }) => {
-      await prisma.session.update({ where: { id: sessionId }, data: { state: "processing", stoppedAt: new Date() } }).catch(() => {});
+      await prisma.recordingSession.update({ where: { id: sessionId }, data: { state: "processing", stoppedAt: new Date() } }).catch(() => { });
       ns.to(sessionId).emit("processing", { sessionId });
       enqueueJob("finalize", { sessionId });
     });

@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "./generated"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,14 +14,60 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  name      String?
-  sessions  Session[]
-  createdAt DateTime  @default(now())
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          String?   @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  sessions      Session[]
+  accounts      Account[]
+  recordings    RecordingSession[]
 }
 
 model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+
+  // BetterAuth field for email/password login
+  password              String?
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model RecordingSession {
   id            String              @id @default(cuid())
   userId        String
   title         String?
@@ -30,11 +76,12 @@ model Session {
   state         SessionState        @default(recording)
   summary       String?             @db.Text
   transcriptUrl String?
-  segments      TranscriptSegment[]
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
 
+  // Relations
   user          User                @relation(fields: [userId], references: [id])
+  segments      TranscriptSegment[]
 }
 
 model TranscriptSegment {
@@ -48,7 +95,7 @@ model TranscriptSegment {
   isFinal    Boolean  @default(false)
   createdAt  DateTime @default(now())
 
-  session    Session  @relation(fields: [sessionId], references: [id])
+  recordingSession RecordingSession @relation(fields: [sessionId], references: [id])
 
   @@index([sessionId, seq])
 }

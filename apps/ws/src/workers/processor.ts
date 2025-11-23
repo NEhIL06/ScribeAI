@@ -124,11 +124,11 @@ async function handleFinalize(job: any, io?: any) {
   log.info({ sessionId }, "finalizing");
 
   const segments = await prisma.transcriptSegment.findMany({ where: { sessionId }, orderBy: { seq: "asc" } });
-  const fullText = segments.map((s:any) => s.text).join("\n");
+  const fullText = segments.map((s: any) => s.text).join("\n");
 
   const summary = await summarizeTranscript(fullText, { sessionId });
 
-  await prisma.session.update({ where: { id: sessionId }, data: { summary, state: "completed", stoppedAt: new Date() } });
+  await prisma.recordingSession.update({ where: { id: sessionId }, data: { summary, state: "completed", stoppedAt: new Date() } });
 
   if (io) io.of("/record").to(sessionId).emit("completed", { sessionId, summary });
 }

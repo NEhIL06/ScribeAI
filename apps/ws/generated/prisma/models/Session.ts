@@ -26,82 +26,70 @@ export type AggregateSession = {
 
 export type SessionMinAggregateOutputType = {
   id: string | null
-  userId: string | null
-  title: string | null
-  startedAt: Date | null
-  stoppedAt: Date | null
-  state: $Enums.SessionState | null
-  summary: string | null
-  transcriptUrl: string | null
+  expiresAt: Date | null
+  token: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  ipAddress: string | null
+  userAgent: string | null
+  userId: string | null
 }
 
 export type SessionMaxAggregateOutputType = {
   id: string | null
-  userId: string | null
-  title: string | null
-  startedAt: Date | null
-  stoppedAt: Date | null
-  state: $Enums.SessionState | null
-  summary: string | null
-  transcriptUrl: string | null
+  expiresAt: Date | null
+  token: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  ipAddress: string | null
+  userAgent: string | null
+  userId: string | null
 }
 
 export type SessionCountAggregateOutputType = {
   id: number
-  userId: number
-  title: number
-  startedAt: number
-  stoppedAt: number
-  state: number
-  summary: number
-  transcriptUrl: number
+  expiresAt: number
+  token: number
   createdAt: number
   updatedAt: number
+  ipAddress: number
+  userAgent: number
+  userId: number
   _all: number
 }
 
 
 export type SessionMinAggregateInputType = {
   id?: true
-  userId?: true
-  title?: true
-  startedAt?: true
-  stoppedAt?: true
-  state?: true
-  summary?: true
-  transcriptUrl?: true
+  expiresAt?: true
+  token?: true
   createdAt?: true
   updatedAt?: true
+  ipAddress?: true
+  userAgent?: true
+  userId?: true
 }
 
 export type SessionMaxAggregateInputType = {
   id?: true
-  userId?: true
-  title?: true
-  startedAt?: true
-  stoppedAt?: true
-  state?: true
-  summary?: true
-  transcriptUrl?: true
+  expiresAt?: true
+  token?: true
   createdAt?: true
   updatedAt?: true
+  ipAddress?: true
+  userAgent?: true
+  userId?: true
 }
 
 export type SessionCountAggregateInputType = {
   id?: true
-  userId?: true
-  title?: true
-  startedAt?: true
-  stoppedAt?: true
-  state?: true
-  summary?: true
-  transcriptUrl?: true
+  expiresAt?: true
+  token?: true
   createdAt?: true
   updatedAt?: true
+  ipAddress?: true
+  userAgent?: true
+  userId?: true
   _all?: true
 }
 
@@ -179,15 +167,13 @@ export type SessionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type SessionGroupByOutputType = {
   id: string
-  userId: string
-  title: string | null
-  startedAt: Date
-  stoppedAt: Date | null
-  state: $Enums.SessionState
-  summary: string | null
-  transcriptUrl: string | null
+  expiresAt: Date
+  token: string
   createdAt: Date
   updatedAt: Date
+  ipAddress: string | null
+  userAgent: string | null
+  userId: string
   _count: SessionCountAggregateOutputType | null
   _min: SessionMinAggregateOutputType | null
   _max: SessionMaxAggregateOutputType | null
@@ -213,63 +199,52 @@ export type SessionWhereInput = {
   OR?: Prisma.SessionWhereInput[]
   NOT?: Prisma.SessionWhereInput | Prisma.SessionWhereInput[]
   id?: Prisma.StringFilter<"Session"> | string
-  userId?: Prisma.StringFilter<"Session"> | string
-  title?: Prisma.StringNullableFilter<"Session"> | string | null
-  startedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
-  stoppedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
-  state?: Prisma.EnumSessionStateFilter<"Session"> | $Enums.SessionState
-  summary?: Prisma.StringNullableFilter<"Session"> | string | null
-  transcriptUrl?: Prisma.StringNullableFilter<"Session"> | string | null
+  expiresAt?: Prisma.DateTimeFilter<"Session"> | Date | string
+  token?: Prisma.StringFilter<"Session"> | string
   createdAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
-  segments?: Prisma.TranscriptSegmentListRelationFilter
+  ipAddress?: Prisma.StringNullableFilter<"Session"> | string | null
+  userAgent?: Prisma.StringNullableFilter<"Session"> | string | null
+  userId?: Prisma.StringFilter<"Session"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type SessionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  title?: Prisma.SortOrderInput | Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  stoppedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  state?: Prisma.SortOrder
-  summary?: Prisma.SortOrderInput | Prisma.SortOrder
-  transcriptUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  segments?: Prisma.TranscriptSegmentOrderByRelationAggregateInput
+  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  userAgent?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type SessionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  token?: string
   AND?: Prisma.SessionWhereInput | Prisma.SessionWhereInput[]
   OR?: Prisma.SessionWhereInput[]
   NOT?: Prisma.SessionWhereInput | Prisma.SessionWhereInput[]
-  userId?: Prisma.StringFilter<"Session"> | string
-  title?: Prisma.StringNullableFilter<"Session"> | string | null
-  startedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
-  stoppedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
-  state?: Prisma.EnumSessionStateFilter<"Session"> | $Enums.SessionState
-  summary?: Prisma.StringNullableFilter<"Session"> | string | null
-  transcriptUrl?: Prisma.StringNullableFilter<"Session"> | string | null
+  expiresAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
-  segments?: Prisma.TranscriptSegmentListRelationFilter
+  ipAddress?: Prisma.StringNullableFilter<"Session"> | string | null
+  userAgent?: Prisma.StringNullableFilter<"Session"> | string | null
+  userId?: Prisma.StringFilter<"Session"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "token">
 
 export type SessionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  title?: Prisma.SortOrderInput | Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  stoppedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  state?: Prisma.SortOrder
-  summary?: Prisma.SortOrderInput | Prisma.SortOrder
-  transcriptUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  userAgent?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrder
   _count?: Prisma.SessionCountOrderByAggregateInput
   _max?: Prisma.SessionMaxOrderByAggregateInput
   _min?: Prisma.SessionMinOrderByAggregateInput
@@ -280,109 +255,89 @@ export type SessionScalarWhereWithAggregatesInput = {
   OR?: Prisma.SessionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SessionScalarWhereWithAggregatesInput | Prisma.SessionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Session"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"Session"> | string
-  title?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
-  startedAt?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
-  stoppedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Session"> | Date | string | null
-  state?: Prisma.EnumSessionStateWithAggregatesFilter<"Session"> | $Enums.SessionState
-  summary?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
-  transcriptUrl?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
+  expiresAt?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
+  token?: Prisma.StringWithAggregatesFilter<"Session"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
+  ipAddress?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
+  userAgent?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
+  userId?: Prisma.StringWithAggregatesFilter<"Session"> | string
 }
 
 export type SessionCreateInput = {
   id?: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
+  expiresAt: Date | string
+  token: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  segments?: Prisma.TranscriptSegmentCreateNestedManyWithoutSessionInput
+  ipAddress?: string | null
+  userAgent?: string | null
   user: Prisma.UserCreateNestedOneWithoutSessionsInput
 }
 
 export type SessionUncheckedCreateInput = {
   id?: string
-  userId: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
+  expiresAt: Date | string
+  token: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  segments?: Prisma.TranscriptSegmentUncheckedCreateNestedManyWithoutSessionInput
+  ipAddress?: string | null
+  userAgent?: string | null
+  userId: string
 }
 
 export type SessionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  segments?: Prisma.TranscriptSegmentUpdateManyWithoutSessionNestedInput
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutSessionsNestedInput
 }
 
 export type SessionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  segments?: Prisma.TranscriptSegmentUncheckedUpdateManyWithoutSessionNestedInput
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type SessionCreateManyInput = {
   id?: string
-  userId: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
+  expiresAt: Date | string
+  token: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  ipAddress?: string | null
+  userAgent?: string | null
+  userId: string
 }
 
 export type SessionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SessionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type SessionListRelationFilter = {
@@ -397,46 +352,35 @@ export type SessionOrderByRelationAggregateInput = {
 
 export type SessionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  stoppedAt?: Prisma.SortOrder
-  state?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
-  transcriptUrl?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  ipAddress?: Prisma.SortOrder
+  userAgent?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type SessionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  stoppedAt?: Prisma.SortOrder
-  state?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
-  transcriptUrl?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  ipAddress?: Prisma.SortOrder
+  userAgent?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type SessionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  stoppedAt?: Prisma.SortOrder
-  state?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
-  transcriptUrl?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type SessionScalarRelationFilter = {
-  is?: Prisma.SessionWhereInput
-  isNot?: Prisma.SessionWhereInput
+  ipAddress?: Prisma.SortOrder
+  userAgent?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type SessionCreateNestedManyWithoutUserInput = {
@@ -481,52 +425,24 @@ export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.SessionScalarWhereInput | Prisma.SessionScalarWhereInput[]
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
-export type EnumSessionStateFieldUpdateOperationsInput = {
-  set?: $Enums.SessionState
-}
-
-export type SessionCreateNestedOneWithoutSegmentsInput = {
-  create?: Prisma.XOR<Prisma.SessionCreateWithoutSegmentsInput, Prisma.SessionUncheckedCreateWithoutSegmentsInput>
-  connectOrCreate?: Prisma.SessionCreateOrConnectWithoutSegmentsInput
-  connect?: Prisma.SessionWhereUniqueInput
-}
-
-export type SessionUpdateOneRequiredWithoutSegmentsNestedInput = {
-  create?: Prisma.XOR<Prisma.SessionCreateWithoutSegmentsInput, Prisma.SessionUncheckedCreateWithoutSegmentsInput>
-  connectOrCreate?: Prisma.SessionCreateOrConnectWithoutSegmentsInput
-  upsert?: Prisma.SessionUpsertWithoutSegmentsInput
-  connect?: Prisma.SessionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SessionUpdateToOneWithWhereWithoutSegmentsInput, Prisma.SessionUpdateWithoutSegmentsInput>, Prisma.SessionUncheckedUpdateWithoutSegmentsInput>
-}
-
 export type SessionCreateWithoutUserInput = {
   id?: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
+  expiresAt: Date | string
+  token: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  segments?: Prisma.TranscriptSegmentCreateNestedManyWithoutSessionInput
+  ipAddress?: string | null
+  userAgent?: string | null
 }
 
 export type SessionUncheckedCreateWithoutUserInput = {
   id?: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
+  expiresAt: Date | string
+  token: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  segments?: Prisma.TranscriptSegmentUncheckedCreateNestedManyWithoutSessionInput
+  ipAddress?: string | null
+  userAgent?: string | null
 }
 
 export type SessionCreateOrConnectWithoutUserInput = {
@@ -560,228 +476,107 @@ export type SessionScalarWhereInput = {
   OR?: Prisma.SessionScalarWhereInput[]
   NOT?: Prisma.SessionScalarWhereInput | Prisma.SessionScalarWhereInput[]
   id?: Prisma.StringFilter<"Session"> | string
-  userId?: Prisma.StringFilter<"Session"> | string
-  title?: Prisma.StringNullableFilter<"Session"> | string | null
-  startedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
-  stoppedAt?: Prisma.DateTimeNullableFilter<"Session"> | Date | string | null
-  state?: Prisma.EnumSessionStateFilter<"Session"> | $Enums.SessionState
-  summary?: Prisma.StringNullableFilter<"Session"> | string | null
-  transcriptUrl?: Prisma.StringNullableFilter<"Session"> | string | null
+  expiresAt?: Prisma.DateTimeFilter<"Session"> | Date | string
+  token?: Prisma.StringFilter<"Session"> | string
   createdAt?: Prisma.DateTimeFilter<"Session"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Session"> | Date | string
-}
-
-export type SessionCreateWithoutSegmentsInput = {
-  id?: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutSessionsInput
-}
-
-export type SessionUncheckedCreateWithoutSegmentsInput = {
-  id?: string
-  userId: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type SessionCreateOrConnectWithoutSegmentsInput = {
-  where: Prisma.SessionWhereUniqueInput
-  create: Prisma.XOR<Prisma.SessionCreateWithoutSegmentsInput, Prisma.SessionUncheckedCreateWithoutSegmentsInput>
-}
-
-export type SessionUpsertWithoutSegmentsInput = {
-  update: Prisma.XOR<Prisma.SessionUpdateWithoutSegmentsInput, Prisma.SessionUncheckedUpdateWithoutSegmentsInput>
-  create: Prisma.XOR<Prisma.SessionCreateWithoutSegmentsInput, Prisma.SessionUncheckedCreateWithoutSegmentsInput>
-  where?: Prisma.SessionWhereInput
-}
-
-export type SessionUpdateToOneWithWhereWithoutSegmentsInput = {
-  where?: Prisma.SessionWhereInput
-  data: Prisma.XOR<Prisma.SessionUpdateWithoutSegmentsInput, Prisma.SessionUncheckedUpdateWithoutSegmentsInput>
-}
-
-export type SessionUpdateWithoutSegmentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutSessionsNestedInput
-}
-
-export type SessionUncheckedUpdateWithoutSegmentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ipAddress?: Prisma.StringNullableFilter<"Session"> | string | null
+  userAgent?: Prisma.StringNullableFilter<"Session"> | string | null
+  userId?: Prisma.StringFilter<"Session"> | string
 }
 
 export type SessionCreateManyUserInput = {
   id?: string
-  title?: string | null
-  startedAt?: Date | string
-  stoppedAt?: Date | string | null
-  state?: $Enums.SessionState
-  summary?: string | null
-  transcriptUrl?: string | null
+  expiresAt: Date | string
+  token: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  ipAddress?: string | null
+  userAgent?: string | null
 }
 
 export type SessionUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  segments?: Prisma.TranscriptSegmentUpdateManyWithoutSessionNestedInput
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SessionUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  segments?: Prisma.TranscriptSegmentUncheckedUpdateManyWithoutSessionNestedInput
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SessionUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  state?: Prisma.EnumSessionStateFieldUpdateOperationsInput | $Enums.SessionState
-  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  transcriptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-
-/**
- * Count Type SessionCountOutputType
- */
-
-export type SessionCountOutputType = {
-  segments: number
-}
-
-export type SessionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  segments?: boolean | SessionCountOutputTypeCountSegmentsArgs
-}
-
-/**
- * SessionCountOutputType without action
- */
-export type SessionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the SessionCountOutputType
-   */
-  select?: Prisma.SessionCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * SessionCountOutputType without action
- */
-export type SessionCountOutputTypeCountSegmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TranscriptSegmentWhereInput
-}
 
 
 export type SessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
-  title?: boolean
-  startedAt?: boolean
-  stoppedAt?: boolean
-  state?: boolean
-  summary?: boolean
-  transcriptUrl?: boolean
+  expiresAt?: boolean
+  token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  segments?: boolean | Prisma.Session$segmentsArgs<ExtArgs>
+  ipAddress?: boolean
+  userAgent?: boolean
+  userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  _count?: boolean | Prisma.SessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["session"]>
 
 export type SessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
-  title?: boolean
-  startedAt?: boolean
-  stoppedAt?: boolean
-  state?: boolean
-  summary?: boolean
-  transcriptUrl?: boolean
+  expiresAt?: boolean
+  token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  ipAddress?: boolean
+  userAgent?: boolean
+  userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["session"]>
 
 export type SessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
-  title?: boolean
-  startedAt?: boolean
-  stoppedAt?: boolean
-  state?: boolean
-  summary?: boolean
-  transcriptUrl?: boolean
+  expiresAt?: boolean
+  token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  ipAddress?: boolean
+  userAgent?: boolean
+  userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["session"]>
 
 export type SessionSelectScalar = {
   id?: boolean
-  userId?: boolean
-  title?: boolean
-  startedAt?: boolean
-  stoppedAt?: boolean
-  state?: boolean
-  summary?: boolean
-  transcriptUrl?: boolean
+  expiresAt?: boolean
+  token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  ipAddress?: boolean
+  userAgent?: boolean
+  userId?: boolean
 }
 
-export type SessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "startedAt" | "stoppedAt" | "state" | "summary" | "transcriptUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["session"]>
+export type SessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "expiresAt" | "token" | "createdAt" | "updatedAt" | "ipAddress" | "userAgent" | "userId", ExtArgs["result"]["session"]>
 export type SessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  segments?: boolean | Prisma.Session$segmentsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  _count?: boolean | Prisma.SessionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -793,20 +588,17 @@ export type SessionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $SessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Session"
   objects: {
-    segments: Prisma.$TranscriptSegmentPayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    userId: string
-    title: string | null
-    startedAt: Date
-    stoppedAt: Date | null
-    state: $Enums.SessionState
-    summary: string | null
-    transcriptUrl: string | null
+    expiresAt: Date
+    token: string
     createdAt: Date
     updatedAt: Date
+    ipAddress: string | null
+    userAgent: string | null
+    userId: string
   }, ExtArgs["result"]["session"]>
   composites: {}
 }
@@ -1201,7 +993,6 @@ readonly fields: SessionFieldRefs;
  */
 export interface Prisma__SessionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  segments<T extends Prisma.Session$segmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Session$segmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TranscriptSegmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1233,15 +1024,13 @@ export interface Prisma__SessionClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface SessionFieldRefs {
   readonly id: Prisma.FieldRef<"Session", 'String'>
-  readonly userId: Prisma.FieldRef<"Session", 'String'>
-  readonly title: Prisma.FieldRef<"Session", 'String'>
-  readonly startedAt: Prisma.FieldRef<"Session", 'DateTime'>
-  readonly stoppedAt: Prisma.FieldRef<"Session", 'DateTime'>
-  readonly state: Prisma.FieldRef<"Session", 'SessionState'>
-  readonly summary: Prisma.FieldRef<"Session", 'String'>
-  readonly transcriptUrl: Prisma.FieldRef<"Session", 'String'>
+  readonly expiresAt: Prisma.FieldRef<"Session", 'DateTime'>
+  readonly token: Prisma.FieldRef<"Session", 'String'>
   readonly createdAt: Prisma.FieldRef<"Session", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Session", 'DateTime'>
+  readonly ipAddress: Prisma.FieldRef<"Session", 'String'>
+  readonly userAgent: Prisma.FieldRef<"Session", 'String'>
+  readonly userId: Prisma.FieldRef<"Session", 'String'>
 }
     
 
@@ -1635,30 +1424,6 @@ export type SessionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Sessions to delete.
    */
   limit?: number
-}
-
-/**
- * Session.segments
- */
-export type Session$segmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TranscriptSegment
-   */
-  select?: Prisma.TranscriptSegmentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the TranscriptSegment
-   */
-  omit?: Prisma.TranscriptSegmentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TranscriptSegmentInclude<ExtArgs> | null
-  where?: Prisma.TranscriptSegmentWhereInput
-  orderBy?: Prisma.TranscriptSegmentOrderByWithRelationInput | Prisma.TranscriptSegmentOrderByWithRelationInput[]
-  cursor?: Prisma.TranscriptSegmentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TranscriptSegmentScalarFieldEnum | Prisma.TranscriptSegmentScalarFieldEnum[]
 }
 
 /**

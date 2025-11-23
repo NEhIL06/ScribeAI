@@ -50,6 +50,16 @@ export type User = Prisma.UserModel
  */
 export type Session = Prisma.SessionModel
 /**
+ * Model Account
+ * 
+ */
+export type Account = Prisma.AccountModel
+/**
+ * Model RecordingSession
+ * 
+ */
+export type RecordingSession = Prisma.RecordingSessionModel
+/**
  * Model TranscriptSegment
  * 
  */
