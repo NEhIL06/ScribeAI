@@ -1,0 +1,7 @@
+{
+    "buildCommand": "cd apps/web/scribeai_frontend && npm install && npx prisma generate && npm run build",
+    "outputDirectory": "apps/web/scribeai_frontend/.next",
+    "framework": "nextjs",
+    "installCommand": "npm install",
+    "devCommand": "cd apps/web/scribeai_frontend && npm run dev"
+}

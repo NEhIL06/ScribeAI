@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: scribeai-ws-server
+    env: node
+    plan: starter
+    region: oregon
+    buildCommand: cd apps/ws && npm install && npx prisma generate
+    startCommand: cd apps/ws && npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: GOOGLE_GEMINI_API_KEY
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production

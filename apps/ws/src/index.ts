@@ -14,10 +14,13 @@ app.get("/", (req, res) => res.json({ ok: true, time: new Date().toISOString() }
 const server = http.createServer(app);
 const PORT = Number(process.env.PORT || 4001);
 
-const io = new IOServer(server, {            
+const io = new IOServer(server, {
   cors: {
-    origin: "*", // Allow all origins for dev, restrict in prod
-    methods: ["GET", "POST"]
+    origin: process.env.NODE_ENV === 'production'
+      ? ["https://your-app.vercel.app"] // Update with your Vercel domain
+      : "*", // Allow all origins in development
+    methods: ["GET", "POST"],
+    credentials: true
   },
   maxHttpBufferSize: 1e7,
 });

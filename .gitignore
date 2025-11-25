@@ -30,7 +30,7 @@ dist
 apps/ws/node_modules
 apps/ws/.env
 
-
+DEMO_SCRIPT.md
 
 apps/web/scribeai_frontend/node_modules
 apps/web/scribeai_frontend/.next

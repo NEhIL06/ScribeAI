@@ -123,6 +123,207 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ---
 
+## 🚀 Deployment
+
+### Production Deployment Guide
+
+ScribeAI is configured for easy deployment with **Vercel** (frontend) and **Render** (WebSocket server).
+
+#### Prerequisites
+
+1. **Database**: PostgreSQL instance (use [Supabase](https://supabase.com) free tier)
+2. **Accounts**:
+   - [Vercel](https://vercel.com) account (free)
+   - [Render](https://render.com) account (free tier available)
+3. **API Keys**: Google Gemini API key from [ai.google.dev](https://ai.google.dev)
+
+---
+
+### Step 1: Deploy Database (Supabase)
+
+1. Create account at [supabase.com](https://supabase.com)
+2. Create new project
+3. Copy **Connection Pooler** URL (not direct connection):
+   ```
+   postgresql://postgres.[PROJECT]:[PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+   ```
+4. Keep this handy for next steps
+
+---
+
+### Step 2: Deploy WebSocket Server (Render)
+
+1. **Push code to GitHub** (if not already done)
+
+2. **Go to [Render Dashboard](https://dashboard.render.com/)**
+
+3. **Click "New +" → "Web Service"**
+
+4. **Connect your GitHub repository**
+
+5. **Configure the service:**
+   - **Name**: `scribeai-ws-server`
+   - **Region**: Choose closest to your users
+   - **Branch**: `main`
+   - **Root Directory**: `apps/ws`
+   - **Runtime**: `Node`
+   - **Build Command**: 
+     ```bash
+     npm install && npx prisma generate
+     ```
+   - **Start Command**: 
+     ```bash
+     npm start
+     ```
+
+6. **Add Environment Variables:**
+   ```bash
+   DATABASE_URL=postgresql://... # Your Supabase connection string
+   GOOGLE_GEMINI_API_KEY=your_gemini_api_key
+   PORT=10000
+   NODE_ENV=production
+   ```
+
+7. **Click "Create Web Service"**
+
+8. **Wait for deployment** (~2-3 minutes)
+
+9. **Copy your server URL**: `https://scribeai-ws-server.onrender.com`
+
+---
+
+### Step 3: Deploy Frontend (Vercel)
+
+1. **Go to [Vercel Dashboard](https://vercel.com/dashboard)**
+
+2. **Click "Add New..." → "Project"**
+
+3. **Import your GitHub repository**
+
+4. **Configure the project:**
+   - **Framework Preset**: Next.js
+   - **Root Directory**: `apps/web/scribeai_frontend`
+   - **Build Command**: 
+     ```bash
+     npm install && npx prisma generate && npm run build
+     ```
+   - **Output Directory**: `.next`
+
+5. **Add Environment Variables:**
+   ```bash
+   # Database
+   DATABASE_URL=postgresql://... # Your Supabase connection string
+   
+   # Better Auth
+   BETTER_AUTH_SECRET=your-random-64-char-secret
+   BETTER_AUTH_URL=https://your-app.vercel.app
+   
+   # WebSocket Server URL (from Render)
+   NEXT_PUBLIC_WS_URL=https://scribeai-ws-server.onrender.com
+   WS_URL=https://scribeai-ws-server.onrender.com
+   
+   # Google Gemini
+   GOOGLE_GEMINI_API_KEY=your_gemini_api_key
+   ```
+
+6. **Click "Deploy"**
+
+7. **Wait for deployment** (~2-3 minutes)
+
+8. **Visit your app**: `https://your-app.vercel.app`
+
+---
+
+### Step 4: Run Database Migrations
+
+After frontend is deployed:
+
+1. In your **Vercel project settings** → **Settings** → **Functions**
+2. Or run locally connected to production DB:
+   ```bash
+   DATABASE_URL="your-production-db-url" npx prisma migrate deploy
+   ```
+
+---
+
+### Environment Variables Reference
+
+**Frontend (Vercel):**
+```bash
+DATABASE_URL=postgresql://postgres.[PROJECT]:[PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+BETTER_AUTH_SECRET=generate_with_openssl_rand_base64_64
+BETTER_AUTH_URL=https://your-app.vercel.app
+NEXT_PUBLIC_WS_URL=https://scribeai-ws-server.onrender.com
+WS_URL=https://scribeai-ws-server.onrender.com
+GOOGLE_GEMINI_API_KEY=your_api_key_here
+```
+
+**WebSocket Server (Render):**
+```bash
+DATABASE_URL=postgresql://postgres.[PROJECT]:[PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+GOOGLE_GEMINI_API_KEY=your_api_key_here
+PORT=10000
+NODE_ENV=production
+```
+
+---
+
+### Deployment Checklist
+
+- [ ] Database created on Supabase
+- [ ] WebSocket server deployed on Render
+- [ ] Frontend deployed on Vercel
+- [ ] All environment variables configured
+- [ ] Database migrations run
+- [ ] Test signup/login flow
+- [ ] Test recording session end-to-end
+- [ ] Verify WebSocket connection (check browser console)
+
+---
+
+### Troubleshooting
+
+**Issue: "WebSocket connection failed"**
+- Check CORS configuration in `apps/ws/src/index.ts`
+- Update `origin` to include your Vercel domain:
+  ```typescript
+  cors: {
+    origin: ["https://your-app.vercel.app", "http://localhost:3000"],
+    methods: ["GET", "POST"]
+  }
+  ```
+
+**Issue: "Database connection error"**
+- Ensure you're using **Connection Pooler** URL from Supabase (port 6543)
+- Add `?pgbouncer=true` to connection string
+- Check Supabase project is not paused (free tier auto-pauses after 7 days inactivity)
+
+**Issue: "Prisma Client not found"**
+- Ensure `npx prisma generate` runs in build command
+- Check build logs on Vercel/Render
+
+**Issue: "Gemini API quota exceeded"**
+  - Free tier: 60 requests/minute, 1500/day
+- Upgrade to paid tier or implement rate limiting
+
+---
+
+### Monitoring Production
+
+**Vercel:**
+- View logs: Dashboard → Your Project → Deployments → View Logs
+- Analytics: Dashboard → Your Project → Analytics
+
+**Render:**
+- View logs: Dashboard → Your Service → Logs tab
+- Metrics: Dashboard → Your Service → Metrics tab
+
+**Supabase:**
+- Database usage: Dashboard → Your Project → Database
+- Connection pooler stats: Dashboard → Settings → Database
+
+---
+
 ## 🏗️ Architecture
 
 ### High-Level Overview
