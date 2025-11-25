@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          String?   @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  sessions      Session[]
+  accounts      Account[]
+  recordings    RecordingSession[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+
+  // BetterAuth field for email/password login
+  password              String?
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model RecordingSession {
+  id            String              @id @default(cuid())
+  userId        String
+  title         String?
+  startedAt     DateTime            @default(now())
+  stoppedAt     DateTime?
+  state         SessionState        @default(recording)
+  summary       String?             @db.Text
+  transcriptUrl String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  // Relations
+  user          User                @relation(fields: [userId], references: [id])
+  segments      TranscriptSegment[]
+}
+
+model TranscriptSegment {
+  id         String   @id @default(cuid())
+  sessionId  String
+  seq        Int
+  startMs    Int
+  endMs      Int
+  text       String   @db.Text
+  speaker    String?
+  isFinal    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  recordingSession RecordingSession @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId, seq])
+}
+
+enum SessionState {
+  recording
+  paused
+  processing
+  completed
+  error
+}
