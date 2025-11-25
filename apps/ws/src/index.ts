@@ -17,7 +17,7 @@ const PORT = Number(process.env.PORT || 4001);
 const io = new IOServer(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production'
-      ? ["https://your-app.vercel.app"] // Update with your Vercel domain
+      ? ["https://scribe-ai-ws.vercel.app"] // Update with your Vercel domain
       : "*", // Allow all origins in development
     methods: ["GET", "POST"],
     credentials: true
