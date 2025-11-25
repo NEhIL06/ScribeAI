@@ -6,8 +6,12 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
-  emailAndPassword:{
+  emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins:[],
+  trustedOrigins: [
+    "https://scribe-ai-ws.vercel.app",
+    "https://*.vercel.app", // Allow all Vercel preview deployments
+    "http://localhost:3000" // Local development
+  ],
 })
