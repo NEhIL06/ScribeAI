@@ -1,7 +1,0 @@
-{
-    "buildCommand": "cd apps/web/scribeai_frontend && bun install && npx prisma generate && bun run build",
-    "outputDirectory": "apps/web/scribeai_frontend/.next",
-    "framework": "nextjs",
-    "installCommand": "bun install",
-    "devCommand": "cd apps/web/scribeai_frontend && bun run dev"
-}
