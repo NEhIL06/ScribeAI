@@ -65,6 +65,41 @@ export default function SessionSummaryPage({ params }: { params: Promise<{ id: s
     }
   }
 
+  // Parse AI-generated markdown summary into structured sections
+  const parsedSummary = session?.summary
+    ? (() => {
+      const text = session.summary
+      const sections = {
+        overview: [] as string[],
+        decisions: [] as string[],
+        actionItems: [] as string[],
+        risks: [] as string[],
+      }
+
+      // Split by markdown headers
+      const overviewMatch = text.match(/###\s*1\.\s*Executive Overview([\s\S]*?)(?=###|$)/i)
+      const decisionsMatch = text.match(/###\s*2\.\s*Key Decisions([\s\S]*?)(?=###|$)/i)
+      const actionMatch = text.match(/###\s*3\.\s*Action Items([\s\S]*?)(?=###|$)/i)
+      const risksMatch = text.match(/###\s*4\.\s*Risks?\s*&?\s*Open Questions([\s\S]*?)(?=###|$)/i)
+
+      // Parse bullet points from each section
+      const parseBullets = (text: string) => {
+        return text
+          .split('\n')
+          .filter(line => line.trim().startsWith('*') || line.trim().startsWith('-'))
+          .map(line => line.replace(/^[\s*-]+/, '').trim())
+          .filter(line => line.length > 0)
+      }
+
+      if (overviewMatch) sections.overview = parseBullets(overviewMatch[1])
+      if (decisionsMatch) sections.decisions = parseBullets(decisionsMatch[1])
+      if (actionMatch) sections.actionItems = parseBullets(actionMatch[1])
+      if (risksMatch) sections.risks = parseBullets(risksMatch[1])
+
+      return sections
+    })()
+    : null
+
   if (isLoading || !session) {
     return (
       <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
@@ -156,17 +191,18 @@ export default function SessionSummaryPage({ params }: { params: Promise<{ id: s
                     <CardTitle className="text-base">Action Items</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2">
-                      {/* Placeholder for action items - in real app would come from AI analysis */}
-                      <li className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-                        <span>Review project timeline by Friday</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-                        <span>Schedule follow-up meeting with design team</span>
-                      </li>
-                    </ul>
+                    {parsedSummary && parsedSummary.actionItems.length > 0 ? (
+                      <ul className="space-y-2">
+                        {parsedSummary.actionItems.map((item, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No action items identified</p>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -175,11 +211,15 @@ export default function SessionSummaryPage({ params }: { params: Promise<{ id: s
                     <CardTitle className="text-base">Key Decisions</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="list-disc space-y-2 pl-4 text-sm">
-                      {/* Placeholder for decisions */}
-                      <li>Approved Q3 marketing budget</li>
-                      <li>Selected React Native for mobile app</li>
-                    </ul>
+                    {parsedSummary && parsedSummary.decisions.length > 0 ? (
+                      <ul className="list-disc space-y-2 pl-4 text-sm">
+                        {parsedSummary.decisions.map((decision, idx) => (
+                          <li key={idx}>{decision}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No explicit decisions made</p>
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -235,13 +275,18 @@ export default function SessionSummaryPage({ params }: { params: Promise<{ id: s
 
           <Card className="bg-primary/5 border-primary/20">
             <CardHeader>
-              <CardTitle className="text-base">AI Insights</CardTitle>
+              <CardTitle className="text-base">Risks & Open Questions</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                This session had high engagement with clear action items identified. The sentiment was generally
-                positive.
-              </p>
+              {parsedSummary && parsedSummary.risks.length > 0 ? (
+                <ul className="list-disc space-y-2 pl-4 text-sm text-muted-foreground">
+                  {parsedSummary.risks.map((risk, idx) => (
+                    <li key={idx}>{risk}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">None identified</p>
+              )}
             </CardContent>
           </Card>
         </div>
