@@ -27,6 +27,10 @@ out/
 build
 dist
 
+apps/ws/node_modules
+apps/ws/.env
+
+
 
 apps/web/scribeai_frontend/node_modules
 apps/web/scribeai_frontend/.next
