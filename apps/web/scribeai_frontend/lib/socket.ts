@@ -15,9 +15,21 @@ let socket: Socket | null = null
 
 /**
  * Get or create Socket.io connection
+ * @param token - Session token from Better Auth (retrieved via useSession hook)
  */
 export function getSocket(token?: string): Socket {
+  // If socket exists but we now have a token, disconnect and recreate with token
+  if (socket && token) {
+    console.log("🔄 Token provided, reconnecting socket with authentication...")
+    socket.disconnect()
+    socket = null
+  }
+
   if (!socket) {
+    console.log("🔌 Initializing WebSocket connection...")
+    console.log(`   Token provided: ${token ? "YES" : "NO"}`)
+    console.log(`   WS URL: ${WS_URL}/record`)
+
     socket = io(`${WS_URL}/record`, {
       auth: token ? { token } : undefined,
       transports: ["websocket", "polling"],
@@ -25,6 +37,29 @@ export function getSocket(token?: string): Socket {
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
       reconnectionAttempts: 5,
+    })
+
+    // Add connection event listeners for debugging
+    socket.on("connect", () => {
+      console.log("✅ WebSocket connected successfully!")
+      console.log(`   Socket ID: ${socket?.id}`)
+    })
+
+    socket.on("connect_error", (error) => {
+      console.error("❌ WebSocket connection error:", error.message)
+      console.error("   This usually means authentication failed or server is unreachable")
+    })
+
+    socket.on("disconnect", (reason) => {
+      console.log("🔌 WebSocket disconnected:", reason)
+    })
+
+    socket.on("Error", (data) => {
+      console.error("❌ WebSocket error event:", data)
+    })
+
+    socket.on("joined", (data) => {
+      console.log("✅ Successfully joined session:", data.sessionId)
     })
   }
   return socket

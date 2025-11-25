@@ -18,7 +18,7 @@ interface UseAudioRecorderReturn extends RecorderState {
   resumeRecording: () => void
 }
 
-const CHUNK_DURATION_MS = 1000 // Send every second
+const CHUNK_DURATION_MS = 15000 // Send every 15 seconds (improved from 1s for better transcription)
 
 function detectSupportedMime() {
   const types = [

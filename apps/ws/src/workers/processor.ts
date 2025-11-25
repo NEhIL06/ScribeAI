@@ -89,39 +89,49 @@ async function handleChunk(job: any, io?: any) {
   console.log(`🎙️  Processing chunk ${seq} for session ${sessionId}`);
   log.info({ sessionId, seq }, "processing chunk");
 
-  const out = filename.replace(/\.(webm|ogg|m4a)$/i, ".wav");
-  await transcodeToWav(filename, out);
-
-  // call stubbed Gemini transcribe
-  const result = await transcribeChunk(out, { sessionId, seq });
-
-  await prisma.transcriptSegment.updateMany({
-    where: { sessionId, seq },
-    data: { text: result.text, speaker: result.speaker ?? null, isFinal: true },
-  });
-
-  if (io) {
-    console.log(`📡 Emitting transcriptSegment for seq ${seq}:`, result.text.substring(0, 50));
-    io.of("/record").to(sessionId).emit("transcriptSegment", {
-      sessionId,
-      seq,
-      text: result.text,
-      speaker: result.speaker,
-      isFinal: true,
-    });
-  } else {
-    console.warn("⚠️  No io instance - cannot emit transcriptSegment");
-  }
-
-  // Archive original file
+  // Gemini supports WebM directly - no need to transcode!
+  // This avoids issues with fragmented WebM chunks that FFmpeg can't read
   try {
-    const archiveDir = path.join(process.cwd(), "data", "archive", sessionId);
-    fs.mkdirSync(archiveDir, { recursive: true });
-    fs.renameSync(filename, path.join(archiveDir, path.basename(filename)));
-    // remove wav
-    fs.unlinkSync(out);
-  } catch (err) {
-    log.warn({ err }, "archive failed");
+    // Verify file exists and has content before processing
+    const stats = await fs.promises.stat(filename);
+    if (stats.size === 0) {
+      throw new Error(`Empty chunk file: ${filename}`);
+    }
+
+    log.info({ sessionId, seq, size: stats.size }, "Chunk file verified, transcribing with Gemini");
+
+    // Call Gemini transcribe directly with WebM file
+    const result = await transcribeChunk(filename, { sessionId, seq });
+
+    await prisma.transcriptSegment.updateMany({
+      where: { sessionId, seq },
+      data: { text: result.text, speaker: result.speaker ?? null, isFinal: true },
+    });
+
+    if (io) {
+      console.log(`📡 Emitting transcriptSegment for seq ${seq}:`, result.text.substring(0, 50));
+      io.of("/record").to(sessionId).emit("transcriptSegment", {
+        sessionId,
+        seq,
+        text: result.text,
+        speaker: result.speaker,
+        isFinal: true,
+      });
+    } else {
+      console.warn("⚠️  No io instance - cannot emit transcriptSegment");
+    }
+
+    // Archive original file
+    try {
+      const archiveDir = path.join(process.cwd(), "data", "archive", sessionId);
+      fs.mkdirSync(archiveDir, { recursive: true });
+      fs.renameSync(filename, path.join(archiveDir, path.basename(filename)));
+    } catch (err) {
+      log.warn({ err }, "archive failed");
+    }
+  } catch (err: any) {
+    log.error({ sessionId, seq, err: err.message }, "Failed to process chunk");
+    throw err;
   }
 }
 
@@ -149,15 +159,49 @@ async function handleFinalize(job: any, io?: any) {
   }
 }
 
-function transcodeToWav(inFile: string, outFile: string) {
-  return new Promise<void>((resolve, reject) => {
-    ffmpeg(inFile)
-      .audioChannels(1)
-      .audioFrequency(16000)
-      .toFormat("wav")
-      .save(outFile)
-      .on("end", () => resolve())
-      .on("error", (err) => reject(err));
+function transcodeToWav(inFile: string, outFile: string): Promise<void> {
+  return new Promise(async (resolve, reject) => {
+    const maxRetries = 3;
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        // Check file exists and is readable
+        await fs.promises.access(inFile, fs.constants.R_OK);
+
+        // Verify file has content
+        const stats = await fs.promises.stat(inFile);
+        if (stats.size === 0) {
+          throw new Error(`Input file is empty: ${inFile}`);
+        }
+
+        // Attempt FFmpeg transcoding
+        await new Promise<void>((res, rej) => {
+          ffmpeg(inFile)
+            .audioChannels(1)
+            .audioFrequency(16000)
+            .toFormat("wav")
+            .save(outFile)
+            .on("end", () => res())
+            .on("error", (err) => rej(err));
+        });
+
+        // Success!
+        return resolve();
+
+      } catch (err: any) {
+        const isLastAttempt = attempt === maxRetries - 1;
+
+        if (isLastAttempt) {
+          log.error({ inFile, attempt, err: err.message }, "FFmpeg transcode failed after retries");
+          return reject(new Error(`ffmpeg exited with code ${err.code || 'unknown'}: ${err.message}`));
+        }
+
+        // Wait before retry with exponential backoff
+        const backoffMs = Math.pow(2, attempt) * 100; // 100ms, 200ms, 400ms
+        log.warn({ inFile, attempt, backoffMs, err: err.message }, "FFmpeg attempt failed, retrying...");
+        await sleep(backoffMs);
+      }
+    }
   });
 }
 

@@ -13,13 +13,17 @@ import { LiveTranscript } from "@/components/transcription/live-transcript"
 import { RecordingControls } from "@/components/recording/recording-controls"
 import { useAudioRecorder } from "@/hooks/use-audio-recorder"
 import { getSession } from "@/lib/api"
-import { joinSession, onSocketEvent, pauseSession, resumeSession, stopSession } from "@/lib/socket"
+import { getSocket, joinSession, onSocketEvent, pauseSession, resumeSession, stopSession } from "@/lib/socket"
 import { useToast } from "@/hooks/use-toast"
+import { authClient } from "@/lib/auth-client"
 
 export default function SessionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
   const { toast } = useToast()
+
+  // Get Better Auth session to retrieve token
+  const { data: authSession } = authClient.useSession()
 
   const { data: initialSession, isLoading } = useSWR(`session-${id}`, () => getSession(id))
 
@@ -42,8 +46,21 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
     }
   }, [initialSession, send, id, router])
 
-  // Socket event listeners
+  // Socket event listeners - initialize socket with auth token
   useEffect(() => {
+    console.log("📡 Setting up socket event listeners for session:", id)
+    console.log("🔑 Auth session available:", !!authSession)
+    console.log("🔑 Session token available:", !!authSession?.session?.token)
+
+    // Initialize socket with token from Better Auth session
+    if (authSession?.session?.token) {
+      const socket = getSocket(authSession.session.token)
+      console.log("✅ Socket initialized with auth token")
+    } else {
+      console.warn("⚠️ No auth session token available, initializing socket without token")
+      getSocket()
+    }
+
     joinSession(id)
 
     const cleanups = [
@@ -72,9 +89,10 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
     ]
 
     return () => {
+      console.log("🧹 Cleaning up socket event listeners")
       cleanups.forEach((cleanup) => cleanup())
     }
-  }, [id, send, router])
+  }, [id, send, router, authSession])
 
   const handleStart = async (source: "mic" | "tab") => {
     try {
