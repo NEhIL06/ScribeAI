@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "bun run src/index.ts",
-    "start": "node --loader ts-node/esm src/index.ts",
+    "start": "bun run src/index.ts --loader ts-node/esm",
     "build": "bun build src/index.ts --outdir dist"
   },
   "devDependencies": {
