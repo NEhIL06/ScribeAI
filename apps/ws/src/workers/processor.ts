@@ -7,7 +7,7 @@ import os from "os";
 import fs from "fs";
 import path from "path";
 import { transcribeChunk, summarizeTranscript } from "../lib/gemini";
-import { prisma } from "../../../../packages/database/src";
+import prisma from "../prisma/client";
 
 ffmpeg.setFfmpegPath(ffmpegPath as string);
 const log = pino();
@@ -20,6 +20,7 @@ export function setIo(io: any) { ioRef = io; }
 export function setIoServer(io: any) { ioRef = io; }
 
 export function startProcessor(io?: any) {
+  console.log("🚀 PROCESSOR STARTED");
   recoverStaleRunning();
   tick(io);
 }
@@ -51,6 +52,7 @@ async function tick(io?: any) {
         continue;
       }
 
+      console.log("📦 Picked job:", job.type, job.payload);
       active++;
       processJob(job, io).catch(err => log.error({ err }, "processJob error")).finally(() => active--);
     } catch (err) {
@@ -84,13 +86,14 @@ async function processJob(job: any, io?: any) {
 
 async function handleChunk(job: any, io?: any) {
   const { sessionId, seq, filename, meta } = job.payload;
+  console.log(`🎙️  Processing chunk ${seq} for session ${sessionId}`);
   log.info({ sessionId, seq }, "processing chunk");
 
   const out = filename.replace(/\.(webm|ogg|m4a)$/i, ".wav");
   await transcodeToWav(filename, out);
 
   // call stubbed Gemini transcribe
-  const result = await transcribeChunk(out, { sessionId, seq, meta });
+  const result = await transcribeChunk(out, { sessionId, seq });
 
   await prisma.transcriptSegment.updateMany({
     where: { sessionId, seq },
@@ -98,6 +101,7 @@ async function handleChunk(job: any, io?: any) {
   });
 
   if (io) {
+    console.log(`📡 Emitting transcriptSegment for seq ${seq}:`, result.text.substring(0, 50));
     io.of("/record").to(sessionId).emit("transcriptSegment", {
       sessionId,
       seq,
@@ -105,6 +109,8 @@ async function handleChunk(job: any, io?: any) {
       speaker: result.speaker,
       isFinal: true,
     });
+  } else {
+    console.warn("⚠️  No io instance - cannot emit transcriptSegment");
   }
 
   // Archive original file
@@ -121,16 +127,26 @@ async function handleChunk(job: any, io?: any) {
 
 async function handleFinalize(job: any, io?: any) {
   const { sessionId } = job.payload;
+  console.log(`✅ Finalizing session ${sessionId}`);
   log.info({ sessionId }, "finalizing");
 
-  const segments = await prisma.transcriptSegment.findMany({ where: { sessionId }, orderBy: { seq: "asc" } });
-  const fullText = segments.map((s: any) => s.text).join("\n");
+  try {
+    const segments = await prisma.transcriptSegment.findMany({ where: { sessionId }, orderBy: { seq: "asc" } });
+    const fullText = segments.map((s: any) => s.text).join("\n");
 
-  const summary = await summarizeTranscript(fullText, { sessionId });
+    const summary = await summarizeTranscript(fullText, { sessionId });
 
-  await prisma.recordingSession.update({ where: { id: sessionId }, data: { summary, state: "completed", stoppedAt: new Date() } });
+    await prisma.recordingSession.update({ where: { id: sessionId }, data: { summary, state: "completed", stoppedAt: new Date() } });
 
-  if (io) io.of("/record").to(sessionId).emit("completed", { sessionId, summary });
+    console.log(`📡 Emitting completed event with summary (${summary.length} chars)`);
+    if (io) io.of("/record").to(sessionId).emit("completed", { sessionId, summary });
+  } catch (error) {
+    log.error({ sessionId, err: error }, "Failed to finalize session");
+    await prisma.recordingSession.update({
+      where: { id: sessionId },
+      data: { state: "error", stoppedAt: new Date() }
+    }).catch(e => log.error({ sessionId, err: e }, "Failed to update session state to error"));
+  }
 }
 
 function transcodeToWav(inFile: string, outFile: string) {

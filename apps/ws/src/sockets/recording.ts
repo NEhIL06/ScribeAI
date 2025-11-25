@@ -2,7 +2,7 @@ import { Server, Socket } from "socket.io";
 import path from "path";
 import fs from "fs";
 import { z } from "zod";
-import { prisma } from "../../../../packages/database/src"
+import prisma from "../prisma/client";
 import { enqueueJob } from "../queue/diskQueue";
 import { CHUNK_STORE } from "../config";
 
@@ -16,6 +16,28 @@ const chunkMeta = z.object({
 
 export function registerRecordingNamespace(io: Server) {
   const ns = io.of("/record");
+
+  ns.use(async (socket, next) => {
+    const token = socket.handshake.auth?.token || socket.handshake.query.token;
+    if (!token) return next(new Error("Missing auth token"));
+
+    try {
+      const session = await prisma.session.findUnique({
+        where: { token: token as string },
+        include: { user: true }
+      });
+
+      if (!session || session.expiresAt < new Date()) {
+        return next(new Error("Unauthorized"));
+      }
+
+      (socket as any).user = session.user;
+      next();
+    } catch (err) {
+      console.error("Auth error:", err);
+      next(new Error("Unauthorized"));
+    }
+  });
 
   ns.on("connection", (socket: Socket) => {
     console.log("socket connected", socket.id);
@@ -53,6 +75,8 @@ export function registerRecordingNamespace(io: Server) {
       const filename = path.join(dir, `${seq}.webm`);
       fs.writeFileSync(filename, Buffer.from(buffer));
 
+      console.log(`🎵 Received audio chunk ${seq} for session ${sessionId} (${buffer.byteLength} bytes)`);
+
       // create DB segment placeholder if not exist
       try {
         await prisma.transcriptSegment.create({
@@ -71,6 +95,7 @@ export function registerRecordingNamespace(io: Server) {
 
       // enqueue for processing
       enqueueJob("chunk", { sessionId, seq, filename, meta: parsed.data });
+      console.log(`✅ Enqueued chunk ${seq} for processing`);
 
       socket.emit("chunkAck", { ok: true, sessionId, seq });
     });
@@ -86,9 +111,11 @@ export function registerRecordingNamespace(io: Server) {
     });
 
     socket.on("stopSession", async ({ sessionId }: { sessionId: string }) => {
+      console.log(`🛑 stopSession called for ${sessionId}`);
       await prisma.recordingSession.update({ where: { id: sessionId }, data: { state: "processing", stoppedAt: new Date() } }).catch(() => { });
       ns.to(sessionId).emit("processing", { sessionId });
       enqueueJob("finalize", { sessionId });
+      console.log(`📦 Enqueued finalize job for ${sessionId}`);
     });
 
     socket.on("heartbeat", () => {

@@ -4,8 +4,7 @@ import dotenv from "dotenv";
 import { Server as IOServer } from "socket.io";
 import { registerRecordingNamespace } from "./sockets/recording";
 import { startProcessor, setIo } from "./workers/processor";
-//TODO change to ./scribeai/web
-import { authClient } from "../../web/scribeai_frontend/lib/auth-client";
+import prisma from "./prisma/client";
 
 dotenv.config();
 
@@ -15,24 +14,14 @@ app.get("/", (req, res) => res.json({ ok: true, time: new Date().toISOString() }
 const server = http.createServer(app);
 const PORT = Number(process.env.PORT || 4001);
 
-const io = new IOServer(server, {
-  path: "/ws",
+const io = new IOServer(server, {            
+  cors: {
+    origin: "*", // Allow all origins for dev, restrict in prod
+    methods: ["GET", "POST"]
+  },
   maxHttpBufferSize: 1e7,
 });
 
-io.use(async (socket, next) => {
-  const token = socket.handshake.auth?.token || socket.handshake.query.token;
-  if (!token) return next(new Error("Missing auth token"));
-
-  try {
-    
-    const { data: session} = authClient.useSession();
-    (socket as any).user = session?.user;
-    next();
-  } catch {
-    next(new Error("Unauthorized"));
-  }
-});
 
 setIo(io);
 registerRecordingNamespace(io);
