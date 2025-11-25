@@ -177,17 +177,26 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
           },
           buffer
         )
+
+        // CRITICAL: Restart MediaRecorder to create a NEW complete WebM file
+        // This ensures each chunk has proper headers for Gemini to decode
+        if (mediaRecorder.state === "inactive" && sessionIdRef.current) {
+          console.log("🔄 Restarting MediaRecorder for next chunk...")
+          try {
+            mediaRecorder.start()
+          } catch (err) {
+            console.error("Failed to restart MediaRecorder:", err)
+          }
+        }
       }
 
-      try {
-        mediaRecorder.start(CHUNK_DURATION_MS)
-      } catch {
-        console.warn("⚠ Fallback: manual chunk slicing")
-        mediaRecorder.start()
-        sliceIntervalRef.current = setInterval(() => {
-          if (mediaRecorder.state === "recording") mediaRecorder.requestData()
-        }, CHUNK_DURATION_MS)
-      }
+      // Start with stop interval to create complete chunks
+      mediaRecorder.start()
+      sliceIntervalRef.current = setInterval(() => {
+        if (mediaRecorder.state === "recording" && sessionIdRef.current) {
+          mediaRecorder.stop() // Stop creates complete WebM and triggers ondataavailable
+        }
+      }, CHUNK_DURATION_MS)
 
       mediaRecorderRef.current = mediaRecorder
       startTimeRef.current = Date.now()

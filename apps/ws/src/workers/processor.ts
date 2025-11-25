@@ -1,15 +1,12 @@
 import { pickJob, completeJob, failJob, recoverStaleRunning } from "../queue/diskQueue";
 import { MAX_CONCURRENCY, MAX_PENDING_JOBS, MIN_FREE_BYTES } from "../config";
 import pino from "pino";
-import ffmpegPath from "ffmpeg-static";
-import ffmpeg from "fluent-ffmpeg";
 import os from "os";
 import fs from "fs";
 import path from "path";
 import { transcribeChunk, summarizeTranscript } from "../lib/gemini";
 import prisma from "../prisma/client";
 
-ffmpeg.setFfmpegPath(ffmpegPath as string);
 const log = pino();
 
 let active = 0;
@@ -157,52 +154,6 @@ async function handleFinalize(job: any, io?: any) {
       data: { state: "error", stoppedAt: new Date() }
     }).catch(e => log.error({ sessionId, err: e }, "Failed to update session state to error"));
   }
-}
-
-function transcodeToWav(inFile: string, outFile: string): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-    const maxRetries = 3;
-
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      try {
-        // Check file exists and is readable
-        await fs.promises.access(inFile, fs.constants.R_OK);
-
-        // Verify file has content
-        const stats = await fs.promises.stat(inFile);
-        if (stats.size === 0) {
-          throw new Error(`Input file is empty: ${inFile}`);
-        }
-
-        // Attempt FFmpeg transcoding
-        await new Promise<void>((res, rej) => {
-          ffmpeg(inFile)
-            .audioChannels(1)
-            .audioFrequency(16000)
-            .toFormat("wav")
-            .save(outFile)
-            .on("end", () => res())
-            .on("error", (err) => rej(err));
-        });
-
-        // Success!
-        return resolve();
-
-      } catch (err: any) {
-        const isLastAttempt = attempt === maxRetries - 1;
-
-        if (isLastAttempt) {
-          log.error({ inFile, attempt, err: err.message }, "FFmpeg transcode failed after retries");
-          return reject(new Error(`ffmpeg exited with code ${err.code || 'unknown'}: ${err.message}`));
-        }
-
-        // Wait before retry with exponential backoff
-        const backoffMs = Math.pow(2, attempt) * 100; // 100ms, 200ms, 400ms
-        log.warn({ inFile, attempt, backoffMs, err: err.message }, "FFmpeg attempt failed, retrying...");
-        await sleep(backoffMs);
-      }
-    }
-  });
 }
 
 function sleep(ms: number) {

@@ -6,8 +6,8 @@
  * - summarizeTranscript: given full transcript text, return a structured meeting summary.
  *
  * This uses the official Gemini GenAI SDK:
- *   - https://ai.google.dev/gemini-api/docs/audio
- *   - https://ai.google.dev/gemini-api/docs/text-generation
+ * - https://ai.google.dev/gemini-api/docs/audio
+ * - https://ai.google.dev/gemini-api/docs/text-generation
  */
 
 import fs from "node:fs/promises";
@@ -146,35 +146,39 @@ export async function transcribeChunk(
 
   const diarizationInstruction = diarization
     ? `
-- Add inline speaker labels like "Speaker 1:", "Speaker 2:" if there are multiple speakers.
-- Keep labels consistent across chunks as much as possible.
+- Add inline speaker labels like "Speaker 1:", "Speaker 2:" only if there are clearly multiple speakers swapping turns.
 `
     : `
-- Do NOT hallucinate speaker labels unless clearly obvious from the audio.
+- Do NOT output speaker labels (like "Speaker:"). Just output the raw spoken text.
 `;
 
   const langHintInstruction = languageHint
     ? `The primary spoken language is likely: ${languageHint}.\n`
     : "";
 
+  // STRICT ANTI-HALLUCINATION PROMPT
   const prompt = `
-You are an automatic meeting transcription engine for a tool called ScribeAI.
+      You are a raw, verbatim speech-to-text transcription engine processing a continuous stream of audio. 
+      Your output will be stitched together with previous and future chunks.
 
-Task:
-- Transcribe this *single* audio chunk from a longer meeting.
-- Return only the raw transcript text for THIS CHUNK.
-- No explanations, no metadata, no JSON.
+      **CORE DIRECTIVES:**
 
-Formatting:
-- Use short lines separated by newlines between utterances.
-- Do not add timestamps.
-${diarizationInstruction}
+      1. **OUTPUT RAW TEXT ONLY:** Do not output timestamps, introductory phrases, or line breaks. Output a single, continuous string of text.
+      2. **HANDLE FRAGMENTS:** The audio provided is a 15-second fragment. 
+        - Transcribe standard speech normally.
+        - If the audio starts mid-sentence, start transcribing exactly where the sound begins. 
+        - **EDGE CASE:** If a word is cut off at the very start or very end of the audio, transcribe the audible portion phonetically if possible, or the closest valid word if it's 90% audible.
+      3. **NO HALLUCINATIONS (CRITICAL):** - If the audio is silent, contains only typing sounds, or background noise, output an empty string. 
+        - **ABSOLUTELY FORBIDDEN:** Do not invent filler words like "I'm going to share my screen", "Can you see my deck?", or "Logging in as user". If you do not hear human speech, write NOTHING.
+      4. **VERBATIM ACCURACY:** Transcribe exactly what is said. Include "um", "uh" if audible. Do not paraphrase.
 
-Context:
-- sessionId: ${sessionId}
-- chunkIndex: ${seq}
-${langHintInstruction}
-`.trim();
+      ${diarizationInstruction}
+
+      Context:
+      - sessionId: ${sessionId}
+      - chunkIndex: ${seq}
+      ${langHintInstruction}
+      `.trim();
 
   const contents = [
     { text: prompt },
@@ -190,9 +194,9 @@ ${langHintInstruction}
     const response = await ai.models.generateContent({
       model: TRANSCRIBE_MODEL,
       contents,
-      // Slightly low temperature so it behaves deterministically
+      // STRICT ZERO TEMPERATURE to prevent "creativity" during silence
       config: {
-        temperature: 0.1,
+        temperature: 0.0, 
       },
     });
 
@@ -241,38 +245,46 @@ export async function summarizeTranscript(
   );
 
   const systemInstruction = `
-You are ScribeAI, an expert AI meeting assistant.
+    You are ScribeAI, an expert executive meeting analyst. Your goal is to distill raw, messy speech-to-text transcripts into structured, high-value intelligence.
 
-Given the raw transcript of a meeting, you must produce:
-- A concise summary (3–6 bullet points) of key topics.
-- Explicit decisions made.
-- Action items with owners if mentioned.
-- Optional risks / open questions.
+    **Analysis Rules:**
+    1. **Filter Noise:** Ignore standard meeting setup chatter (e.g., "Can you see my screen?", "You're on mute", "Is everyone here?", "I'm going to share") unless it impacts a decision.
+    2. **Fact-Based:** Do NOT invent agenda items or attendees not explicitly heard. If a name is not mentioned, use "Unassigned" or "Team".
+    3. **Consolidate:** Group related points together rather than listing them chronologically.
+    4. **Distinguish:** Clearly separate *suggestions* from *final decisions*. Only list a "Decision" if the group agreed to it.
 
-Constraints:
-- Do NOT invent facts or attendees that are not clearly in the transcript.
-- If something is unclear, say "Not specified" rather than guessing.
-- Use clear, compact bullet points.
-`.trim();
+    **Formatting Requirements:**
+    - Use professional, objective language.
+    - Use clean Markdown.
+    - Action Items must follow the strict format: **[Owner]**: [Task]
+    `.trim();
 
-  const titleLine = title ? `Meeting title: ${title}\n` : "";
-  const contextLine = context ? `Extra context: ${context}\n` : "";
+      const titleLine = title ? `Meeting Context/Title: ${title}\n` : "";
+      const contextLine = context ? `Additional Context: ${context}\n` : "";
 
-  const userContent = `
-${titleLine}${contextLine}
-Below is the FULL raw transcript of the meeting.
+      const userContent = `
+    ${titleLine}${contextLine}
+    Below is the RAW transcript stream. It may contain stutters, fragments, or lack speaker labels.
 
-TRANSCRIPT START
-${fullText}
-TRANSCRIPT END
+    TRANSCRIPT START
+    ${fullText}
+    TRANSCRIPT END
 
-Now produce:
+    Based on the transcript above, generate a summary using exactly this template:
 
-1. **Overview** – 3–6 bullets.
-2. **Key Decisions** – bullets with short descriptions.
-3. **Action Items** – bullets with \`Owner - Task - (Optional Due Date)\`.
-4. **Open Questions / Risks** – if any.
-`.trim();
+    ### 1. Executive Overview
+    * (3-5 high-level bullets summarizing the core purpose and outcome of the meeting. Focus on the "Why" and the "Result".)
+
+    ### 2. Key Decisions
+    * (List explicit agreements made. If none, write "No explicit decisions made".)
+
+    ### 3. Action Items
+    * **[Owner Name OR "Unassigned"]**: (Specific task description) - *(Due Date if mentioned)*
+    * **[Owner Name OR "Unassigned"]**: (Specific task description) - *(Due Date if mentioned)*
+
+    ### 4. Risks & Open Questions
+    * (List unresolved issues or potential blockers mentioned. If none, write "None identified".)
+    `.trim();
 
   try {
     const response = await ai.models.generateContent({

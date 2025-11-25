@@ -1,0 +1,11 @@
+{
+  "id": "491bcd96-6a8e-4650-a3eb-c5e00c279182",
+  "type": "finalize",
+  "createdAt": 1764045631556,
+  "attempts": 0,
+  "payload": {
+    "sessionId": "cmidzwem000007ktmgwcr2jbh"
+  },
+  "__runningFile": "data\\jobs\\491bcd96-6a8e-4650-a3eb-c5e00c279182.running",
+  "completedAt": 1764045638140
+}

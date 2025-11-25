@@ -1,0 +1,11 @@
+{
+  "id": "9769ddd3-84a8-441d-b6f9-b1a9cb76e5ff",
+  "type": "finalize",
+  "createdAt": 1764048442815,
+  "attempts": 0,
+  "payload": {
+    "sessionId": "cmie4tzcp0000v8tmve5xdkcl"
+  },
+  "__runningFile": "data\\jobs\\9769ddd3-84a8-441d-b6f9-b1a9cb76e5ff.running",
+  "completedAt": 1764048450243
+}

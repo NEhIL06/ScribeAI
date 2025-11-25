@@ -1,0 +1,20 @@
+{
+  "id": "ac6e512f-6d45-4fec-9a7f-90d96a511e58",
+  "type": "chunk",
+  "createdAt": 1764046191981,
+  "attempts": 0,
+  "payload": {
+    "sessionId": "cmie3i9sx0000tktm0koh9x5n",
+    "seq": 4,
+    "filename": "data\\chunks\\cmie3i9sx0000tktm0koh9x5n\\4.webm",
+    "meta": {
+      "sessionId": "cmie3i9sx0000tktm0koh9x5n",
+      "seq": 4,
+      "startMs": 75223,
+      "durationMs": 15000,
+      "mime": "audio/webm;codecs=opus"
+    }
+  },
+  "__runningFile": "data\\jobs\\ac6e512f-6d45-4fec-9a7f-90d96a511e58.running",
+  "completedAt": 1764046431791
+}
