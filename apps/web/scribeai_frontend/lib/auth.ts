@@ -11,6 +11,7 @@ export const auth = betterAuth({
   },
   trustedOrigins: [
     "https://scribe-ai-ws.vercel.app",
+    "https://scribe-ai-2n5vplsnf-portfoliomoms-projects.vercel.app",
     "https://*.vercel.app", // Allow all Vercel preview deployments
     "http://localhost:3000" // Local development
   ],
