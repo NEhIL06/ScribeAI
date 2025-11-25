@@ -16,50 +16,39 @@
 
 ---
 
-## 📖 About
+## Overview
 
-ScribeAI transforms live conversations into searchable, actionable text. Capture audio from your microphone or browser tabs (Google Meet, Zoom), get real-time transcription powered by Google Gemini AI, and receive intelligent summaries with key decisions and action items.
+ScribeAI is a full-stack application that captures and transcribes audio from live meetings in real-time. It supports both direct microphone input and browser tab/screen audio capture (e.g., Google Meet, Zoom), streams audio chunks to Google Gemini AI for live transcription, and generates intelligent post-session summaries with action items and key decisions.
 
-**Perfect for:**
-- 📊 Product managers tracking feature discussions
-- 👥 Teams needing meeting documentation
-- 📝 Researchers conducting interviews
-- 🎓 Students recording lectures
-- 💼 Consultants capturing client calls
+**Core Workflow:**
+1. **Visit Landing Page** → Learn about features and benefits
+2. **Authenticate** → Secure login via Better Auth
+3. **Start Recording** → Choose microphone or tab audio source
+4. **Live Transcription** → See transcript appear in real-time as you speak
+5. **Pause/Resume** → Full session control
+6. **AI Summary** → Automatic generation of meeting notes, decisions, and action items
+7. **Session History** → Access past recordings and transcripts
+
+**Designed for:** Product managers, engineers, consultants, and teams who need searchable, actionable meeting notes without manual effort.
 
 ---
 
 ## ✨ Features
 
-### Core Capabilities
-
-🎤 **Flexible Audio Input**
-- Direct microphone recording
-- Browser tab/screen audio capture (Google Meet, Zoom, etc.)
-- High-quality WebM/Opus encoding
-
-⚡ **Real-Time Transcription**
-- Live speech-to-text with ~2-3 second latency
-- Google Gemini AI processing
-- WebSocket-based streaming for instant feedback
-
-🧠 **Intelligent Summarization**
-- Automatic extraction of key discussion points
-- Decision tracking with context
-- Action items with owner identification
-- Risk and open question highlights
-
-🎛️ **Session Management**
-- Pause and resume recordings
-- Session history and search
-- Export capabilities
-- State persistence (handles disconnections)
-
-🔐 **Enterprise-Ready**
-- Secure authentication (Better Auth)
-- Session-based access control
-- PostgreSQL data storage
-- Privacy-focused (HttpOnly cookies)
+### Core Functionality
+- 🏠 **Professional Landing Page**: Clean, minimalistic design showcasing features and benefits
+- ✅ **Real-Time Transcription**: Live speech-to-text using Google Gemini AI with ~200ms latency
+- ✅ **Dual Audio Sources**: Capture from microphone OR browser tab/screen audio
+- ✅ **Session Management**: Create, pause, resume, and stop recording sessions
+- ✅ **Live UI Updates**: WebSocket-powered real-time status and transcript streaming
+- ✅ **AI-Powered Summaries**: Intelligent parsing and display of:
+  - **Executive Overview** - High-level meeting summary
+  - **Key Decisions** - Explicit agreements made during discussion
+  - **Action Items** - Tasks with owner identification and due dates
+  - **Risks & Open Questions** - Unresolved issues and blockers
+- ✅ **Session History**: Browse and review past recordings with searchable transcripts
+- ✅ **Secure Authentication**: Better Auth with HttpOnly session cookies
+- ✅ **Export Capabilities**: Download transcripts as TXT or JSON
 
 ---
 
@@ -573,7 +562,50 @@ socket.on('completed', (data) => {
 
 See [detailed comparison table](./SCALABILITY.md#architecture-comparison) in scalability docs.
 
-### 4. **Monorepo Architecture**
+### 4. **Better Auth**
+
+**Why:** Secure session management and user authentication.
+
+**Alternative Rejected**: Storing token in localStorage (vulnerable to XSS).
+
+### 5. **Structured AI Summary with Markdown Parsing**
+
+**Decision**: Use structured markdown template for Gemini summaries, parse on frontend.
+
+**Rationale**:
+- Gemini generates summary with consistent sections (Executive Overview, Key Decisions, Action Items, Risks)
+- Frontend parses markdown using regex to extract bullet points
+- Displays each section dynamically in separate cards
+- No hardcoded placeholder data
+
+**Implementation**:
+```typescript
+// Backend prompt to Gemini
+const template = `
+### 1. Executive Overview
+* (3-5 high-level bullets...)
+
+### 2. Key Decisions
+* (List explicit agreements...)
+
+### 3. Action Items
+* **[Owner]**: (Task description) - *(Due Date)*
+
+### 4. Risks & Open Questions
+* (Unresolved issues...)
+`
+
+// Frontend parsing
+const sections = {
+  overview: extractBullets(text.match(/###\s*1\.\s*Executive Overview.../)),
+  decisions: extractBullets(text.match(/###\s*2\.\s*Key Decisions.../)),
+  // ... etc
+}
+```
+
+**Benefit**: AI generates rich, structured insights that are automatically displayed in the UI without manual formatting.
+
+### 6. **Monorepo Architecture**
 
 **Why:** Separate Next.js frontend and Node.js WebSocket server allows independent scaling and deployment.
 
