@@ -2,12 +2,13 @@ import { type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  const { supabaseResponse } = createClient(request);
-
-  // NOTE: Do NOT add logic between createClient() and the return.
-  // Doing so can cause user sessions to be prematurely invalidated.
-
-  return supabaseResponse;
+  try {
+    const { supabaseResponse } = createClient(request);
+    return supabaseResponse;
+  } catch (error) {
+    console.error("Middleware invocation error:", error);
+    return NextResponse.next();
+  }
 }
 
 export const config = {
