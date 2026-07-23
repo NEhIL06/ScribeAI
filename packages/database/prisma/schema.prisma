@@ -27,6 +27,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
   recordings    RecordingSession[]
+
+  @@map("user")
 }
 
 model Session {
@@ -65,6 +67,17 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
 }
 
 model RecordingSession {
